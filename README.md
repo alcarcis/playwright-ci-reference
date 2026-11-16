@@ -20,15 +20,16 @@ flowchart LR
   GATE -->|only required check| M[Merge to main]
 ```
 
-| Concern             | How it is solved here                                                                                                            |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Fast feedback       | Tests run in 2 parallel shards; browsers are cached per Playwright version; a newer push cancels stale runs                      |
-| One source of truth | Sharded blob reports are merged into a single HTML report plus a Markdown summary on the run page                                |
-| Debuggable failures | Traces on first retry, screenshots and video on failure, uploaded as artifacts                                                   |
-| Flakiness           | One retry in CI; tests that pass only on retry are reported as **flaky**; a nightly run repeats the suite 3×                     |
-| Secrets             | No credentials in the repo. Test credentials are generated per run, masked in logs; gitleaks scans the whole history on every PR |
-| Supply chain        | Every third-party action is pinned to a commit SHA (version in a comment); workflows run with read-only permissions by default   |
-| Enforcement         | One required status, `CI gate`, so adding or renaming jobs never breaks branch protection                                        |
+| Concern             | How it is solved here                                                                                                                                                                                                                                                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fast feedback       | Tests run in 2 parallel shards; browsers are cached per Playwright version; a newer push cancels stale runs                                                                                                                                                                                                                     |
+| One source of truth | Sharded blob reports are merged into a single HTML report plus a Markdown summary on the run page                                                                                                                                                                                                                               |
+| Debuggable failures | Traces on first retry, screenshots and video on failure, uploaded as artifacts                                                                                                                                                                                                                                                  |
+| Flakiness           | One retry in CI; tests that pass only on retry are reported as **flaky**; a nightly run repeats the suite 3×                                                                                                                                                                                                                    |
+| Evidence            | PR runs keep traces, screenshots and video only for failures (fast, light). The nightly run records a full trace for every test, so its published report has evidence even when everything passes. Traces include request bodies: the login password is ephemeral per run and belongs to a demo app, so nothing real is exposed |
+| Secrets             | No credentials in the repo. Test credentials are generated per run, masked in logs; gitleaks scans the whole history on every PR                                                                                                                                                                                                |
+| Supply chain        | Every third-party action is pinned to a commit SHA (version in a comment); workflows run with read-only permissions by default                                                                                                                                                                                                  |
+| Enforcement         | One required status, `CI gate`, so adding or renaming jobs never breaks branch protection                                                                                                                                                                                                                                       |
 
 ## Project layout
 

@@ -37,6 +37,7 @@ jobs:
         env:
           PLAYWRIGHT_HTML_OPEN: never
           PLAYWRIGHT_JSON_OUTPUT_NAME: results.json
+          PW_TRACE: 'on' # full trace for every test, so the published report has evidence even when all is green
         run: |
           npx playwright test --repeat-each=3 --reporter=html,json
       - name: Summary

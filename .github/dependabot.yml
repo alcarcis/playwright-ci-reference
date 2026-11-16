@@ -11,3 +11,7 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: development
+    ignore:
+      # typescript-eslint does not support TypeScript 7 yet (npm ci fails with ERESOLVE). Revisit when it does.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']

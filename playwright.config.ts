@@ -22,7 +22,9 @@ export default defineConfig({
   reporter: isCI ? [['blob'], ['github']] : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL,
-    trace: 'on-first-retry',
+    // PW_TRACE=on records every test (used by the nightly run to publish evidence for passing tests too).
+    trace:
+      (process.env.PW_TRACE as 'on' | 'off' | 'on-first-retry' | undefined) ?? 'on-first-retry',
     screenshot: 'only-on-failure',
     video: isCI ? 'retain-on-failure' : 'off',
   },
