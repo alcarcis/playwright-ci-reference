@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Demo Shop</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 640px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      .error {
+        color: #b00020;
+      }
+      li {
+        margin: 0.4rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Demo Shop</h1>
+
+    <section id="login-view">
+      <h2>Sign in</h2>
+      <form id="login-form">
+        <label>Username <input name="username" autocomplete="username" /></label>
+        <label
+          >Password <input name="password" type="password" autocomplete="current-password"
+        /></label>
+        <button type="submit">Sign in</button>
+      </form>
+      <p id="login-error" class="error" role="alert" hidden></p>
+    </section>
+
+    <section id="shop-view" hidden>
+      <button id="logout" type="button">Sign out</button>
+      <h2>Products</h2>
+      <ul id="products"></ul>
+      <h2>Cart</h2>
+      <p id="cart-empty">Your cart is empty.</p>
+      <ul id="cart-items"></ul>
+      <p>Total: <strong id="cart-total">0.00</strong></p>
+      <button id="checkout" type="button" disabled>Checkout</button>
+      <p id="order-confirmation" role="status" hidden></p>
+    </section>
+
+    <script src="app.js"></script>
+  </body>
+</html>
