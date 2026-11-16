@@ -147,10 +147,61 @@ jobs:
           path: playwright-report
           retention-days: 14
 
+  # Performance budget: the app runs as a container and k6 enforces latency/error thresholds.
+  perf:
+    name: Performance budget (k6)
+    needs: static
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: grafana/setup-k6-action@c47136d33d365efbeb9ae7266908b5dcf98cdece # v1.3.0
+
+      - name: Generate ephemeral test credentials
+        run: |
+          password="$(openssl rand -hex 16)"
+          echo "::add-mask::$password"
+          echo "APP_USER=ci-user" >> "$GITHUB_ENV"
+          echo "APP_PASSWORD=$password" >> "$GITHUB_ENV"
+
+      - name: Build and start the app container
+        run: |
+          docker build -t shop-app .
+          docker run -d --name shop -p 3100:3100 -e APP_USER -e APP_PASSWORD shop-app
+          for i in $(seq 1 20); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' shop)" = "healthy" ] && exit 0
+            sleep 2
+          done
+          docker logs shop
+          echo "App container did not become healthy." && exit 1
+
+      - name: Run k6 (fails the job if a threshold is crossed)
+        run: k6 run perf/smoke.js --summary-export perf-summary.json
+
+      - name: Summarize
+        if: ${{ !cancelled() }}
+        run: |
+          node scripts/perf-summary.mjs perf-summary.json >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Upload k6 summary
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: k6-summary
+          path: perf-summary.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Stop the container
+        if: ${{ always() }}
+        run: docker rm -f shop || true
+
   # Single status for branch protection: require "CI gate" and nothing else.
   gate:
     name: CI gate
-    needs: [static, secrets, test, report]
+    needs: [static, secrets, test, report, perf]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
