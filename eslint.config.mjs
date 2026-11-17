@@ -20,6 +20,14 @@ export default tseslint.config(
     },
   },
   {
+    // k6 scripts run in k6's own runtime: its globals and `k6/*` modules are not Node's.
+    files: ['perf/**/*.js'],
+    languageOptions: {
+      sourceType: 'module',
+      globals: { __ENV: 'readonly', console: 'readonly' },
+    },
+  },
+  {
     files: ['app/public/**/*.js'],
     languageOptions: {
       sourceType: 'script',
