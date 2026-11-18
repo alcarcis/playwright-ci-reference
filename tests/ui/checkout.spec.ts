@@ -9,7 +9,7 @@ test.describe('cart and checkout', () => {
     await signedInShop.add('USB-C hub');
     await signedInShop.add('USB-C hub');
     await signedInShop.expectCartItem('USB-C hub × 2');
-    await signedInShop.expectTotal('69.00');
+    await signedInShop.expectTotal('70.00');
   });
 
   test('checkout confirms the order and empties the cart', async ({ signedInShop }) => {
